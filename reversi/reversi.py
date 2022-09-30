@@ -17,10 +17,10 @@ def display_board(board: List[List[int]]) -> bool:
         else:
             return "x"
 
-    print("   ", *list(range(8)))
-    print("   -----------------")
+    print("   {} {} {} {} {} {} {} {}".format(*list(range(8))))
+    print("  ----------------")
     for i, row in enumerate(board):
-        print(i, "|", *list(map(convert, row)))
+        print("{}| {} {} {} {} {} {} {} {}".format(i, *list(map(convert, row))))
 
     return True
 
