@@ -119,9 +119,52 @@ def main():
     board[4, 3] = BLACK
     board[4, 4] = WHITE
 
+    board_backup: np.ndarray = board.copy()
+
+    os.system("clear")
     display_board(board)
-    board = put_stone(board, 2, 4, 0)
-    display_board(board)
+    print("")
+
+    while np.count_nonzero(board == -1) != 0:
+        print("Current Turn: {}".format("WHITE" if turn == 0 else "BLACK"))
+        candidate = get_candidate(board, turn)
+        print(
+            "Candidate space is:",
+            *[
+                (i, j)
+                for i, j in itertools.product(range(8), repeat=2)
+                if np.sum(candidate, axis=2)[i, j] != 0
+            ]
+        )
+        S: str = input(
+            (
+                "Enter row and column numbers of where you want to "
+                "put the stone, separated by spaces: "
+            )
+        )
+
+        try:
+            r, c = map(int, S.split())
+        except ValueError:
+            print("Invalid input. Enter valid input again.", file=sys.stderr)
+            continue
+
+        board = put_stone(board, r, c, turn)
+        if board is None:
+            print("Cannot put the stone there. Enter valid input again.")
+            os.system("clear")
+            board = board_backup.copy()
+            os.system("clear")
+            display_board(board)
+            print("")
+            continue
+
+        turn = 1 - turn
+        board_backup = board.copy()
+
+        os.system("clear")
+        display_board(board)
+        print("")
 
 
 if __name__ == "__main__":
