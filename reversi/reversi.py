@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 import itertools
 import os
 import sys
@@ -8,6 +8,9 @@ import numpy as np
 EMPTY: int = -1
 WHITE: int = 0
 BLACK: int = 1
+
+DR: List[int] = [0, -1, -1, -1, 0, 1, 1, 1]
+DC: List[int] = [1, 1, 0, -1, -1, -1, 0, 1]
 
 
 def display_board(board: np.ndarray) -> bool:
@@ -27,7 +30,7 @@ def display_board(board: np.ndarray) -> bool:
     return True
 
 
-def put_stone(board: np.ndarray, r: int, c: int, color: int) -> bool:
+def put_stone(board: np.ndarray, r: int, c: int, color: int) -> Union[np.ndarray, None]:
     """Put specified color stone into specified place.
     Args:
         board (np.ndarray): A 2-D list indicating the board.
@@ -38,7 +41,27 @@ def put_stone(board: np.ndarray, r: int, c: int, color: int) -> bool:
         Bool: True If the stone has been successfully put, False otherwise.
     """
 
-    return True
+    nboard = board.copy()
+    candidate = get_candidate(nboard, color)
+    if np.sum(candidate, axis=2)[r, c] == 0:
+        return None
+
+    nboard[r, c] = color
+
+    for i, (dr, dc) in enumerate(zip(DR, DC)):
+        if candidate[r, c, i] == 0:
+            continue
+        nr: int = r
+        nc: int = c
+        while True:
+            nr += dr
+            nc += dc
+
+            if nboard[nr, nc] == color:
+                break
+            nboard[nr, nc] = color
+
+    return nboard
 
 
 def get_candidate(board: np.ndarray, color: int) -> np.ndarray:
@@ -51,16 +74,13 @@ def get_candidate(board: np.ndarray, color: int) -> np.ndarray:
     """
 
     result: np.ndarray = np.array(
-        [[0 for j in range(8)] for i in range(8)], dtype=np.int32
+        [[[0 for k in range(8)] for j in range(8)] for i in range(8)], dtype=np.int32
     )
     for i, j in itertools.product(range(8), repeat=2):
         if board[i, j] != EMPTY:
             continue
 
-        for dr, dc in itertools.product([-1, 0, 1], repeat=2):
-            if (dr, dc) == (0, 0):
-                continue
-
+        for k, (dr, dc) in enumerate(zip(DR, DC)):
             r: int = i
             c: int = j
             count: int = 0
@@ -83,7 +103,7 @@ def get_candidate(board: np.ndarray, color: int) -> np.ndarray:
                 else:
                     count += 1
 
-            result[i, j] += count if ok else 0
+            result[i, j, k] = count if ok else 0
 
     return result
 
@@ -100,9 +120,8 @@ def main():
     board[4, 4] = WHITE
 
     display_board(board)
-
-    c = get_candidate(board, 1)
-    print(c)
+    board = put_stone(board, 2, 4, 0)
+    display_board(board)
 
 
 if __name__ == "__main__":

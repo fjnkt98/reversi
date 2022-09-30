@@ -79,7 +79,7 @@ def test_get_candidate():
         ]
     )
 
-    assert np.array_equal(reversi.get_candidate(board, 0), case)
+    assert np.array_equal(np.sum(reversi.get_candidate(board, 0), axis=2), case)
 
     board = np.array(
         [
@@ -107,7 +107,7 @@ def test_get_candidate():
         ]
     )
 
-    assert np.array_equal(reversi.get_candidate(board, 0), case)
+    assert np.array_equal(np.sum(reversi.get_candidate(board, 0), axis=2), case)
 
     board = np.array(
         [
@@ -135,4 +135,4 @@ def test_get_candidate():
         ]
     )
 
-    assert np.array_equal(reversi.get_candidate(board, 0), case)
+    assert np.array_equal(np.sum(reversi.get_candidate(board, 0), axis=2), case)
