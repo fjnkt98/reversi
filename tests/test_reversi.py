@@ -2,12 +2,14 @@ from typing import List
 import pytest
 import sys
 import io
+import numpy as np
 from reversi import reversi
 
 
 def test_display_board(capsys, monkeypatch):
-
-    board: List[List[int]] = [[reversi.EMPTY for j in range(8)] for i in range(8)]
+    board: np.ndarray = np.array(
+        [[reversi.EMPTY for j in range(8)] for i in range(8)], dtype=np.int32
+    )
     monkeypatch.setattr("sys.stdin", io.StringIO())
 
     reversi.display_board(board)
@@ -27,10 +29,10 @@ def test_display_board(capsys, monkeypatch):
         "7|                \n"
     )
 
-    board[3][3] = reversi.WHITE
-    board[3][4] = reversi.BLACK
-    board[4][3] = reversi.BLACK
-    board[4][4] = reversi.WHITE
+    board[3, 3] = reversi.WHITE
+    board[3, 4] = reversi.BLACK
+    board[4, 3] = reversi.BLACK
+    board[4, 4] = reversi.WHITE
 
     reversi.display_board(board)
 
