@@ -125,16 +125,42 @@ def main():
     display_board(board)
     print("")
 
-    while np.count_nonzero(board == -1) != 0:
-        print("Current Turn: {}".format("WHITE" if turn == 0 else "BLACK"))
+    while True:
+        white_count: int = np.count_nonzero(board == WHITE)
+        black_count: int = np.count_nonzero(board == BLACK)
+        if white_count + black_count == 64:
+            print("Game set.")
+            if white_count > black_count:
+                print("Winner: WHITE.")
+            elif white_count < black_count:
+                print("Winner: BLACK.")
+
+            break
+
+        if white_count == 0:
+            print("Game set.")
+            print("Winner: BLACK")
+            break
+        elif black_count == 0:
+            print("Game set.")
+            print("Winner: WHITE")
+            break
+
         candidate = get_candidate(board, turn)
+        if np.sum(candidate) == 0:
+            print("")
+            print(f"Player {turn} cannot put stone. Turn has been passed.")
+            turn = 1 - turn
+            candidate = get_candidate(board, turn)
+
+        print("Current Turn: {}".format("WHITE" if turn == 0 else "BLACK"))
         print(
             "Candidate space is:",
             *[
                 (i, j)
                 for i, j in itertools.product(range(8), repeat=2)
                 if np.sum(candidate, axis=2)[i, j] != 0
-            ]
+            ],
         )
         S: str = input(
             (
