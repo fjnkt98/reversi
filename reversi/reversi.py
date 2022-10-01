@@ -1,4 +1,4 @@
-from typing import List, Union
+from typing import List, Dict, Union
 import itertools
 import os
 import sys
@@ -13,21 +13,36 @@ DR: List[int] = [0, -1, -1, -1, 0, 1, 1, 1]
 DC: List[int] = [1, 1, 0, -1, -1, -1, 0, 1]
 
 
-def display_board(board: np.ndarray) -> bool:
-    def convert(x: int) -> str:
-        if x == EMPTY:
-            return " "
-        elif x == WHITE:
-            return "o"
-        else:
-            return "x"
+def display_board(board: np.ndarray) -> str:
+    """盤面の状態を表すフォーマットされた文字列を返す。
 
-    print("   {} {} {} {} {} {} {} {}".format(*list(range(8))))
-    print("  ----------------")
+    Arg:
+        board (np.ndarray): 盤面を表すNumPy配列
+    Return:
+        str: フォーマットされた文字列
+    """
+
+    # セルの数値を対応する文字に変換する辞書
+    convert: Dict[int, str] = {
+        EMPTY: " ",
+        WHITE: "o",
+        BLACK: "x",
+    }
+
+    # 結果を格納する配列
+    result: List[str] = []
+
+    # ヘッダを記録する
+    result.append("   {} {} {} {} {} {} {} {}".format(*list(range(8))))
+    result.append("  ----------------")
+    # 各行を記録する
     for i, row in enumerate(board):
-        print("{}| {} {} {} {} {} {} {} {}".format(i, *list(map(convert, row))))
+        result.append(
+            "{}| {} {} {} {} {} {} {} {}".format(i, *[convert[cell] for cell in row])
+        )
 
-    return True
+    # 改行文字で区切って結合し返す
+    return "\n".join(result)
 
 
 def put_stone(board: np.ndarray, r: int, c: int, color: int) -> Union[np.ndarray, None]:
@@ -122,7 +137,7 @@ def main():
     board_backup: np.ndarray = board.copy()
 
     os.system("clear")
-    display_board(board)
+    print(display_board(board))
     print("")
 
     while True:
@@ -173,7 +188,7 @@ def main():
             r, c = map(int, S.split())
         except ValueError:
             os.system("clear")
-            display_board(board)
+            print(display_board(board))
             print("")
             print("[ERROR}: Invalid input. Enter valid input again.", file=sys.stderr)
             continue
@@ -183,7 +198,7 @@ def main():
             board = board_backup.copy()
 
             os.system("clear")
-            display_board(board)
+            print(display_board(board))
             print("")
             print("[ERROR]: Cannot put the stone there. Enter valid input again.")
             continue
@@ -192,7 +207,7 @@ def main():
         board_backup = board.copy()
 
         os.system("clear")
-        display_board(board)
+        print(display_board(board))
         print("")
 
 
