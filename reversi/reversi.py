@@ -146,17 +146,20 @@ def main():
         try:
             r, c = map(int, S.split())
         except ValueError:
-            print("Invalid input. Enter valid input again.", file=sys.stderr)
+            os.system("clear")
+            display_board(board)
+            print("")
+            print("[ERROR}: Invalid input. Enter valid input again.", file=sys.stderr)
             continue
 
         board = put_stone(board, r, c, turn)
         if board is None:
-            print("Cannot put the stone there. Enter valid input again.")
-            os.system("clear")
             board = board_backup.copy()
+
             os.system("clear")
             display_board(board)
             print("")
+            print("[ERROR]: Cannot put the stone there. Enter valid input again.")
             continue
 
         turn = 1 - turn
